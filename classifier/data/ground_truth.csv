@@ -1,0 +1,52 @@
+repo_url,true_type,notes
+https://github.com/kohler/hotcrp,Web App,Popular PHP web application framework
+https://github.com/laravel/laravel,Framework,Popular PHP web application framework
+https://github.com/symfony/symfony,Framework,Component-based PHP framework
+https://github.com/WordPress/WordPress,Web App,Popular CMS and blogging platform
+https://github.com/magento/magento2,Web App,E-commerce platform
+https://github.com/drupal/drupal,Web App,Content management system
+https://github.com/joomla/joomla-cms,Web App,Content management system
+https://github.com/opencart/opencart,Web App,E-commerce solution
+https://github.com/PrestaShop/PrestaShop,Web App,E-commerce platform
+https://github.com/cakephp/cakephp,Framework,Rapid development framework
+https://github.com/yiisoft/yii2,Framework,High-performance PHP framework
+https://github.com/codeigniter4/CodeIgniter4,Framework,PHP framework for web applications
+https://github.com/slimphp/Slim,Framework,PHP micro framework
+https://github.com/laminas/laminas-mvc,Framework,MVC application for Laminas Project
+https://github.com/phalcon/cphalcon,Framework,High performance PHP framework
+https://github.com/composer/composer,CLI App,Dependency manager for PHP
+https://github.com/guzzle/guzzle,Library,PHP HTTP client
+https://github.com/sebastianbergmann/phpunit,Library,Testing framework for PHP
+https://github.com/phpDocumentor/phpDocumentor,CLI App,Documentation generator
+https://github.com/thephpleague/flysystem,Library,Filesystem abstraction for PHP
+https://github.com/briannesbitt/Carbon,Library,DateTime library for PHP
+https://github.com/fzaninotto/Faker,Library,PHP library to generate fake data
+https://github.com/nikic/PHP-Parser,Library,PHP parser written in PHP
+https://github.com/phpstan/phpstan,CLI App,PHP static analysis tool
+https://github.com/doctrine/orm,Library,Object-relational mapper for PHP
+https://github.com/symfony/console,Library,Console component from Symfony
+https://github.com/woocommerce/woocommerce,Framework Plugin,E-commerce plugin for WordPress
+https://github.com/wp-plugins/contact-form-7,Framework Plugin,Contact form plugin for WordPress
+https://github.com/wp-plugins/woocommerce,Framework Plugin,E-commerce plugin for WordPress
+https://github.com/wp-plugins/wordpress-seo,Framework Plugin,SEO plugin for WordPress
+https://github.com/wp-plugins/akismet,Framework Plugin,Anti-spam plugin for WordPress
+https://github.com/wp-plugins/jetpack,Framework Plugin,Security and performance plugin for WordPress
+https://github.com/wp-plugins/elementor,Framework Plugin,Page builder plugin for WordPress
+https://github.com/wp-plugins/all-in-one-seo-pack,Framework Plugin,SEO plugin for WordPress
+https://github.com/wp-plugins/wordfence,Framework Plugin,Security plugin for WordPress
+https://github.com/wp-plugins/w3-total-cache,Framework Plugin,Cache plugin for WordPress
+https://github.com/wp-plugins/really-simple-ssl,Framework Plugin,SSL plugin for WordPress
+https://github.com/wp-plugins/google-analytics-for-wordpress,Framework Plugin,Analytics plugin for WordPress
+https://github.com/wp-plugins/updraftplus,Framework Plugin,Backup plugin for WordPress
+https://github.com/wp-themes/twentytwentyone,Framework Theme,Default WordPress theme
+https://github.com/wp-themes/twentytwenty,Framework Theme,WordPress theme
+https://github.com/wp-themes/twentynineteen,Framework Theme,WordPress theme
+https://github.com/wp-themes/astra,Framework Theme,Popular WordPress theme
+https://github.com/wp-themes/storefront,Framework Theme,WooCommerce theme
+https://github.com/flarum/flarum,Web App,Forum software
+https://github.com/phpmyadmin/phpmyadmin,Web App,Database management tool
+https://github.com/roundcube/roundcubemail,Web App,Webmail client
+https://github.com/matomo-org/matomo,Web App,Web analytics platform
+https://github.com/nextcloud/server,Web App,File sharing and collaboration platform
+https://github.com/owncloud/core,Web App,File sharing platform
+https://github.com/php/php-src,PHP-SRC,PHP language source code 

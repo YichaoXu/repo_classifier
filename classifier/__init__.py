@@ -48,7 +48,7 @@ from .evaluation import (
 from .predefine import (
     CLASSIFIER_NAMES,
     ALL_PROJECT_TYPES,
-    ALL_PROJECT_TYPE_NAMES
+    DFT_PROJECT_TYPE_NAMES
 )
 
 # Define public API
@@ -85,5 +85,5 @@ __all__ = [
     # Built-in configurations
     'CLASSIFIER_NAMES',
     'ALL_PROJECT_TYPES',
-    'ALL_PROJECT_TYPE_NAMES'
+    'DFT_PROJECT_TYPE_NAMES'
 ]

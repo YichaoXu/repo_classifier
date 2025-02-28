@@ -7,7 +7,7 @@ and evaluating classifier performance against this data.
 
 import os
 import csv
-from typing import Dict, List, Tuple, Optional, Callable, Any
+from typing import Dict, List, Optional, Callable, Any
 
 # Default path for ground truth CSV file
 DEFAULT_GROUND_TRUTH_PATH = os.path.join(

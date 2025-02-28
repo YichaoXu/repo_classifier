@@ -17,7 +17,7 @@ ALL_PROJECT_TYPES = {
 }
 
 # Export all project type names
-ALL_PROJECT_TYPE_NAMES = {
+DFT_PROJECT_TYPE_NAMES = {
     "php": PHP_PROJECT_TYPE_NAMES,
     "python": PYTHON_PROJECT_TYPE_NAMES,
     "javascript": JAVASCRIPT_PROJECT_TYPE_NAMES

@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="repo-classifier",
+    name="repo_classifier",
     version="0.1.0",
     author="YichaoXU",
     author_email="yxu166@jhu.edu",

@@ -6,13 +6,16 @@ It analyzes README content to determine the most likely project types based on k
 and predefined weights.
 """
 
-from typing import Dict
+from typing import Dict, Union
 from ..utils import normalize_scores
 
 # Export functions
 __all__ = ['classify_readme_heuristic']
 
-def classify_readme_heuristic(readme_text: str, project_types: Dict[str, Dict[str, int]]) -> Dict[str, float]:
+def classify_readme_heuristic(
+    readme_text: str, 
+    classifier: Union[str, Dict[str, Dict[str, int]]]
+) -> Dict[str, float]:
     """
     Classify repository README content based on keywords and weights using a heuristic approach.
     
@@ -25,7 +28,7 @@ def classify_readme_heuristic(readme_text: str, project_types: Dict[str, Dict[st
                     This is a required parameter containing the raw text of the README file.
                     The text will be preprocessed (converted to lowercase) before analysis.
         
-        project_types: Dictionary mapping project types to their keyword weight mappings.
+        classifier: Dictionary mapping project types to their keyword weight mappings.
                       This is a required parameter that defines the classification criteria.
                       Format:
                       {
@@ -67,7 +70,7 @@ def classify_readme_heuristic(readme_text: str, project_types: Dict[str, Dict[st
     
     # Calculate score for each project type based on keyword occurrences
     scores = {}
-    for project_type, keywords in project_types.items():
+    for project_type, keywords in classifier.items():
         # Initialize score for this project type
         type_score = 0
         

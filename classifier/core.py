@@ -10,8 +10,8 @@ from typing import Dict, List, Optional, Union, Tuple
 from .registry import get_classifier, get_available_classifiers
 from .utils import get_top_n_scores
 from .readme import get_repo_readme, classify_readme_heuristic, classify_readme_ai
-from .predefine import CLASSIFIER_NAMES, DFT_PROJECT_TYPE_NAMES
-from .evaluation.ground_truth import get_ground_truth_repos
+from .predefine import DFT_PROJECT_TYPE_NAMES
+from .evaluation import get_ground_truth_repos
 
 # Export functions
 __all__ = [
@@ -23,8 +23,7 @@ def classify_repository_heuristic(
     repo_url: str,
     classifier: Union[str, Dict[str, Dict[str, int]]],
     top_n: int = 3,
-    check_ground_truth: bool = True
-) -> Union[Dict[str, float], Tuple[Dict[str, float], Optional[str]]]:
+) -> Dict[str, float]:
     """
     Classify a GitHub repository using keyword-based heuristic method.
     
@@ -51,22 +50,11 @@ def classify_repository_heuristic(
               Default: 3
               Must be a positive integer.
         
-        check_ground_truth: Whether to check against ground truth data.
-                           If True, will return a tuple with the classification results and the true type (if found).
-                           If False, will only return the classification results.
-                           Default: True
-        
     Returns:
-        If check_ground_truth is False:
-            A dictionary mapping project types to confidence scores (0.0 to 1.0).
-            Only the top N types are included in the result.
-            Example: {"Web Framework": 0.85, "CMS": 0.35, "E-commerce": 0.15}
-        
-        If check_ground_truth is True:
-            A tuple containing:
-            - The classification results dictionary (as above)
-            - The true type from ground truth data, or None if not found
-            Example: ({"Web Framework": 0.85, "CMS": 0.35}, "Web Framework")
+        A dictionary mapping project types to confidence scores (0.0 to 1.0).
+        Only the top N types are included in the result.
+        Example: {"Web Framework": 0.85, "CMS": 0.35, "E-commerce": 0.15}
+        If the repo in ground truth, there will only be a type.
         
     Raises:
         ValueError: If required parameters are missing or invalid, README cannot be found,
@@ -84,7 +72,6 @@ def classify_repository_heuristic(
         >>> results, true_type = classify_repository_heuristic(
         ...     repo_url="https://github.com/laravel/laravel",
         ...     classifier=CLASSIFIER_NAMES.PHP,
-        ...     check_ground_truth=True
         ... )
         >>> print(f"Predicted: {list(results.keys())[0]}, Actual: {true_type}")
         Predicted: Web Framework, Actual: Web Framework
@@ -101,11 +88,11 @@ def classify_repository_heuristic(
         raise ValueError("top_n must be a positive integer")
         # Check ground truth if requested
     
-    if check_ground_truth and classifier in DFT_PROJECT_TYPE_NAMES:
+    if classifier in DFT_PROJECT_TYPE_NAMES:
         # Get ground truth data
         ground_truth = get_ground_truth_repos()
         true_type = ground_truth.get(repo_url)
-        return { true_type: 1 }
+        return { true_type: 1.0 }
     
     # Parse classifier parameter
     if isinstance(classifier, str):
@@ -139,8 +126,7 @@ def classify_repository_ai(
     temperature: float = 0.1,
     max_tokens: Optional[int] = None,
     timeout: int = 60,
-    check_ground_truth: bool = True
-) -> Union[Dict[str, float], Tuple[Dict[str, float], Optional[str]]]:
+) -> Dict[str, float]:
     """
     Classify a GitHub repository using AI service.
     
@@ -195,26 +181,14 @@ def classify_repository_ai(
                 Default: 60
                 Must be a positive integer.
         
-        check_ground_truth: Whether to check against ground truth data.
-                           If True, will return a tuple with the classification results and the true type (if found).
-                           If False, will only return the classification results.
-                           Default: True
-        
     Returns:
-        If check_ground_truth is False:
             A dictionary mapping project types to confidence scores (0.0 to 1.0).
             Only the top N types are included in the result.
             Example: {"Web Framework": 0.92, "Library": 0.45}
-        
-        If check_ground_truth is True:
-            A tuple containing:
-            - The classification results dictionary (as above)
-            - The true type from ground truth data, or None if not found
-            Example: ({"Web Framework": 0.92, "Library": 0.45}, "Web Framework")
+            If the repo in ground truth, there will only be a type.
         
     Raises:
-        ValueError: If required parameters are missing or invalid, README cannot be found, 
-                   classifier is not found, or AI service returns an error.
+        ValueError: If required parameters are missing or invalid, README cannot be found, classifier is not found, or AI service returns an error.
         
     Examples:
         >>> # Classify using OpenAI with PHP classifier
@@ -234,7 +208,6 @@ def classify_repository_ai(
         ...     model_name="gpt-3.5-turbo",
         ...     classifier=CLASSIFIER_NAMES.PHP,
         ...     api_url="https://api.openai.com/v1/chat/completions",
-        ...     check_ground_truth=True
         ... )
         >>> print(f"Predicted: {list(results.keys())[0]}, Actual: {true_type}")
         Predicted: Web Framework, Actual: Web Framework
@@ -265,11 +238,11 @@ def classify_repository_ai(
     if timeout <= 0:
         raise ValueError("timeout must be a positive integer")
     
-    if check_ground_truth and classifier in DFT_PROJECT_TYPE_NAMES:
+    if classifier in DFT_PROJECT_TYPE_NAMES:
         # Get ground truth data
         ground_truth = get_ground_truth_repos()
         true_type = ground_truth.get(repo_url)
-        return { true_type: 1 }
+        return { true_type: 1.0 }
     
     # Determine project types to use
     if isinstance(classifier, str):

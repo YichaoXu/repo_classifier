@@ -4,10 +4,10 @@ AI-based classification functionality.
 This module provides AI-powered classification for repositories.
 """
 
-from typing import Dict, List, Optional, Union
 import re
 import json
 import requests
+from typing import Dict, List, Optional
 
 # Export functions
 __all__ = ['classify_readme_ai']
@@ -18,7 +18,7 @@ def classify_readme_ai(
     api_key: str,
     api_url: str,
     model_name: str,
-    project_types: List[str],
+    classifier: List[str],
     temperature: float = 0.1,
     max_tokens: Optional[int] = None,
     timeout: int = 60
@@ -50,7 +50,7 @@ def classify_readme_ai(
                    - OpenAI models: "gpt-3.5-turbo", "gpt-4", etc.
                    - DeepSeek models: "deepseek-chat", etc.
         
-        project_types: List of possible project types for classification.
+        classifier: List of possible project types for classification.
                       Example: ["Web Framework", "Library", "CLI Tool"]
         
         temperature: Controls randomness in the AI response.
@@ -91,7 +91,7 @@ def classify_readme_ai(
     if not model_name:
         raise ValueError("Model name cannot be empty")
     
-    if not project_types or not isinstance(project_types, list) or len(project_types) == 0:
+    if not classifier or not isinstance(classifier, list) or len(classifier) == 0:
         raise ValueError("Project types must be a non-empty list")
     
     # Validate model name
@@ -117,7 +117,7 @@ def classify_readme_ai(
     # Build prompt
     prompt = f"""
     Analyze the following GitHub repository README and classify it as one of the following project types:
-    {', '.join(project_types)}
+    {', '.join(classifier)}
     
     Repository: {repo_url}
     
@@ -216,7 +216,7 @@ def classify_readme_ai(
                 scores = {project_type: confidence}
                 
                 # Add minimal scores for other types
-                for pt in project_types:
+                for pt in classifier:
                     if pt != project_type:
                         scores[pt] = 0.01
                 

@@ -20,7 +20,8 @@ def classify_readme_ai(
     model_name: str,
     classifier: List[str],
     temperature: float = 0.1,
-    max_tokens: Optional[int] = None,
+    max_in_tokens: Optional[int] = 100,
+    max_out_tokens: Optional[int] = None,
     timeout: int = 60
 ) -> Dict[str, float]:
     """
@@ -111,8 +112,8 @@ def classify_readme_ai(
         raise ValueError(f"Unsupported model: {model_name}. Supported models: {', '.join(supported_model_list)}")
     
     # Truncate README if too long (to avoid token limits)
-    if len(readme_text) > 12000:
-        readme_text = readme_text[:12000] + "...[truncated for length]"
+    if max_in_tokens and len(readme_text) > max_in_tokens:
+        readme_text = readme_text[:max_in_tokens] + "..."
     
     # Build prompt
     prompt = f"""
@@ -146,7 +147,7 @@ def classify_readme_ai(
                     "model": model_name,
                     "messages": [{"role": "user", "content": prompt}],
                     "temperature": temperature,
-                    **({"max_tokens": max_tokens} if max_tokens else {})
+                    **({"max_tokens": max_out_tokens} if max_out_tokens else {})
                 },
                 timeout=timeout
             )
@@ -162,7 +163,7 @@ def classify_readme_ai(
                     "model": model_name,
                     "messages": [{"role": "user", "content": prompt}],
                     "temperature": temperature,
-                    **({"max_tokens": max_tokens} if max_tokens else {})
+                    **({"max_tokens": max_out_tokens} if max_out_tokens else {})
                 },
                 timeout=timeout
             )

@@ -124,7 +124,8 @@ def classify_repository_ai(
     api_url: str,
     top_n: int = 3,
     temperature: float = 0.1,
-    max_tokens: Optional[int] = None,
+    max_in_tokens: Optional[int] = 100,
+    max_out_tokens: Optional[int] = None,
     timeout: int = 60,
 ) -> Dict[str, float]:
     """
@@ -261,15 +262,16 @@ def classify_repository_ai(
     
     # Perform AI classification
     all_scores = classify_readme_ai(
-        readme_text, 
-        repo_url, 
-        api_key, 
-        api_url, 
-        model_name,
-        project_types,
-        temperature,
-        max_tokens,
-        timeout
+        readme_text=readme_text, 
+        repo_url=repo_url, 
+        api_key=api_key, 
+        api_url=api_url, 
+        model_name=model_name,
+        project_types=project_types,
+        temperature=temperature,
+        max_in_tokens=max_in_tokens,
+        max_out_tokens=max_out_tokens, 
+        timeout=timeout
     )
     
     # Get top N scores

@@ -12,5 +12,5 @@ from .ai_classifier import classify_readme_ai
 __all__ = [
     'get_repo_readme',
     'classify_readme_heuristic',
-    'ai_classifier'
+    'classify_readme_ai'
 ]

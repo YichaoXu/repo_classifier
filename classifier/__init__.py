@@ -1,33 +1,31 @@
 """
-Repository Classifier Library - Analyze and classify GitHub repositories
+Repository Classifier Library.
 
-This library provides two classification methods:
-1. Keyword-based heuristic classification
-2. AI-based classification
-
-Users can use built-in classifier configurations or register custom ones.
+This library provides tools for classifying GitHub repositories based on their README content.
+It supports both heuristic (keyword-based) and AI-powered classification methods.
 """
 
-# Export core functionality
+# Version
+__version__ = '0.1.0'
+
+# Core functionality
 from .core import (
     classify_repository_heuristic,
     classify_repository_ai
 )
 
-# Export README processing functionality
+# README processing functionality
 from .readme import (
-    get_repo_readme,
-    heuristic_classify,
-    ai_classify
+    get_repo_readme
 )
 
-# Export utility functions
+# Utility functions
 from .utils import (
     normalize_scores,
     get_top_n_scores
 )
 
-# Export registry functionality
+# Registry functionality
 from .registry import (
     register_classifier,
     unregister_classifier,
@@ -37,34 +35,39 @@ from .registry import (
     create_classifier_from_file
 )
 
-# Export built-in configurations
-from .predefine import (
-    PHP_PROJECT_TYPES,
-    PYTHON_PROJECT_TYPES,
-    ALL_PROJECT_TYPES,
-    ALL_PROJECT_TYPE_NAMES,
-    CLASSIFIER_NAMES
+# Evaluation functionality
+from .evaluation import (
+    load_ground_truth,
+    save_ground_truth,
+    evaluate_classifier,
+    add_ground_truth_entry,
+    get_ground_truth_repos
 )
 
-# Version information
-__version__ = '0.1.0'
+# Built-in configurations
+from .predefine import (
+    CLASSIFIER_NAMES,
+    ALL_PROJECT_TYPES,
+    ALL_PROJECT_TYPE_NAMES
+)
 
-# Define what's available in the public API
+# Define public API
 __all__ = [
+    # Version
+    '__version__',
+    
     # Core functionality
     'classify_repository_heuristic',
     'classify_repository_ai',
     
-    # README processing functionality
+    # README processing
     'get_repo_readme',
-    'heuristic_classify',
-    'ai_classify',
     
-    # Utility functions
+    # Utilities
     'normalize_scores',
     'get_top_n_scores',
     
-    # Registry functionality
+    # Registry
     'register_classifier',
     'unregister_classifier',
     'get_classifier',
@@ -72,13 +75,15 @@ __all__ = [
     'load_classifier_from_module',
     'create_classifier_from_file',
     
-    # Built-in configurations
-    'PHP_PROJECT_TYPES',
-    'PYTHON_PROJECT_TYPES',
-    'ALL_PROJECT_TYPES',
-    'ALL_PROJECT_TYPE_NAMES',
-    'CLASSIFIER_NAMES',
+    # Evaluation
+    'load_ground_truth',
+    'save_ground_truth',
+    'evaluate_classifier',
+    'add_ground_truth_entry',
+    'get_ground_truth_repos',
     
-    # Version
-    '__version__'
+    # Built-in configurations
+    'CLASSIFIER_NAMES',
+    'ALL_PROJECT_TYPES',
+    'ALL_PROJECT_TYPE_NAMES'
 ]

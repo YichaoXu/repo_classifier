@@ -6,11 +6,11 @@ from GitHub repositories.
 """
 
 from .fetcher import get_repo_readme
-from .heuristic import heuristic_classify
-from .ai_classifier import ai_classify
+from .heuristic import classify_readme_heuristic
+from .ai_classifier import classify_readme_ai
 
 __all__ = [
     'get_repo_readme',
-    'heuristic_classify',
+    'classify_readme_heuristic',
     'ai_classifier'
 ]

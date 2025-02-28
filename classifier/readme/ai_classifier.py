@@ -4,48 +4,120 @@ AI-based classification functionality.
 This module provides AI-powered classification for repositories.
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 import re
 import json
 import requests
 
 # Export functions
-__all__ = ['ai_classify']
+__all__ = ['classify_readme_ai']
 
-def ai_classify(
+def classify_readme_ai(
     readme_text: str,
     repo_url: str,
     api_key: str,
-    api_url: Optional[str] = None,
-    model_name: str = "gpt-3.5-turbo",
-    project_types: Optional[List[str]] = None
+    api_url: str,
+    model_name: str,
+    project_types: List[str],
+    temperature: float = 0.1,
+    max_tokens: Optional[int] = None,
+    timeout: int = 60
 ) -> Dict[str, float]:
     """
-    Classify repository using AI service.
+    Classify a repository using AI service based on its README content.
+    
+    This function sends the README content to an AI service (like OpenAI GPT or DeepSeek)
+    and asks it to classify the repository into one of the provided project types.
     
     Args:
-        readme_text: README content
-        repo_url: Repository URL for context
-        api_key: API key for AI service
-        api_url: API URL for AI service
-        model_name: AI model name
-        project_types: List of possible project types
+        readme_text: The README content of the repository to classify.
+                    This should be the raw text content of the README file.
+        
+        repo_url: The URL of the GitHub repository.
+                 Used for context in the prompt to the AI service.
+                 Example: "https://github.com/username/repo-name"
+        
+        api_key: API key for the AI service.
+                This is required for authentication with the AI service.
+                For OpenAI, this is your OpenAI API key.
+        
+        api_url: Custom API URL for the AI service.
+                For GPT models: "https://api.openai.com/v1/chat/completions"
+                For DeepSeek models: "https://api.deepseek.com/v1/chat/completions"
+        
+        model_name: The name of the AI model to use.
+                   Supported models include:
+                   - OpenAI models: "gpt-3.5-turbo", "gpt-4", etc.
+                   - DeepSeek models: "deepseek-chat", etc.
+        
+        project_types: List of possible project types for classification.
+                      Example: ["Web Framework", "Library", "CLI Tool"]
+        
+        temperature: Controls randomness in the AI response.
+                    Lower values make the output more deterministic.
+                    Range: 0.0 to 1.0
+                    Default: 0.1
+        
+        max_tokens: Maximum number of tokens in the AI response.
+                   If None, the model's default maximum is used.
+                   
+        timeout: Request timeout in seconds.
+                Default: 60
     
     Returns:
-        Dictionary of project types and their confidence scores
+        A dictionary mapping project types to confidence scores (0.0 to 1.0).
+        The primary classification will have the highest score, while other
+        types (if provided in project_types) will have minimal scores.
+        Example: {"Web Framework": 0.92, "Library": 0.01, "CLI Tool": 0.01}
     
     Raises:
-        ValueError: If API request fails, response format is invalid, or model is unsupported
-        requests.RequestException: For network-related errors
+        ValueError: If required parameters are missing or invalid, API request fails,
+                   response format is invalid, or model is unsupported.
+        requests.RequestException: For network-related errors.
     """
-    # Truncate README if too long
+    # Validate required parameters
+    if not readme_text:
+        raise ValueError("README text cannot be empty")
+    
+    if not repo_url:
+        raise ValueError("Repository URL cannot be empty")
+    
+    if not api_key:
+        raise ValueError("API key cannot be empty")
+    
+    if not api_url:
+        raise ValueError("API URL cannot be empty")
+    
+    if not model_name:
+        raise ValueError("Model name cannot be empty")
+    
+    if not project_types or not isinstance(project_types, list) or len(project_types) == 0:
+        raise ValueError("Project types must be a non-empty list")
+    
+    # Validate model name
+    supported_models = {
+        "gpt": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"],
+        "deepseek": ["deepseek-chat", "deepseek-coder"]
+    }
+    
+    model_type = None
+    for type_prefix, models in supported_models.items():
+        if any(model in model_name.lower() for model in [type_prefix] + [m.lower() for m in models]):
+            model_type = type_prefix
+            break
+    
+    if not model_type:
+        supported_model_list = [m for models in supported_models.values() for m in models]
+        raise ValueError(f"Unsupported model: {model_name}. Supported models: {', '.join(supported_model_list)}")
+    
+    # Truncate README if too long (to avoid token limits)
     if len(readme_text) > 12000:
-        readme_text = readme_text[:12000] + "..."
+        readme_text = readme_text[:12000] + "...[truncated for length]"
     
     # Build prompt
     prompt = f"""
     Analyze the following GitHub repository README and classify it as one of the following project types:
-    {', '.join(project_types) if project_types else 'Determine appropriate project type'}
+    {', '.join(project_types)}
     
     Repository: {repo_url}
     
@@ -62,9 +134,8 @@ def ai_classify(
     
     try:
         # Different handling based on model type
-        if "deepseek" in model_name.lower():
+        if model_type == "deepseek":
             # DeepSeek API implementation
-            api_url = api_url or "https://api.deepseek.com/v1/chat/completions"
             response = requests.post(
                 api_url,
                 headers={
@@ -74,13 +145,13 @@ def ai_classify(
                 json={
                     "model": model_name,
                     "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.1
+                    "temperature": temperature,
+                    **({"max_tokens": max_tokens} if max_tokens else {})
                 },
-                timeout=60
+                timeout=timeout
             )
-        elif "gpt" in model_name.lower():
+        elif model_type == "gpt":
             # OpenAI API implementation
-            api_url = api_url or "https://api.openai.com/v1/chat/completions"
             response = requests.post(
                 api_url,
                 headers={
@@ -90,13 +161,11 @@ def ai_classify(
                 json={
                     "model": model_name,
                     "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.1
+                    "temperature": temperature,
+                    **({"max_tokens": max_tokens} if max_tokens else {})
                 },
-                timeout=60
+                timeout=timeout
             )
-        else:
-            # Generic implementation for other models
-            raise ValueError(f"Unsupported model: {model_name}")
         
         # Process response
         if response.status_code != 200:
@@ -109,7 +178,18 @@ def ai_classify(
                 error_message += f" - {response.text}"
             raise ValueError(error_message)
         
-        content = response.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+        response_data = response.json()
+        
+        # Extract content from response (handle different API response formats)
+        if "choices" in response_data and len(response_data["choices"]) > 0:
+            if "message" in response_data["choices"][0]:
+                content = response_data["choices"][0]["message"].get("content", "")
+            elif "text" in response_data["choices"][0]:
+                content = response_data["choices"][0].get("text", "")
+            else:
+                raise ValueError(f"Unexpected API response format: {response_data}")
+        else:
+            raise ValueError(f"No choices found in API response: {response_data}")
         
         # Extract JSON from response
         json_match = re.search(r'({.*})', content, re.DOTALL)
@@ -117,23 +197,30 @@ def ai_classify(
         if json_match:
             try:
                 result = json.loads(json_match.group(1))
+                # Validate response format
+                if "project_type" not in result:
+                    raise ValueError(f"Missing 'project_type' in AI response: {result}")
+                
+                if "confidence" not in result:
+                    # If confidence is missing but we have a project_type, assume high confidence
+                    result["confidence"] = 90
+                
                 # Convert to score dictionary
-                if "project_type" in result and "confidence" in result:
-                    project_type = result["project_type"]
-                    confidence = result["confidence"] / 100.0  # Normalize to 0-1
-                    
-                    # Create scores dictionary with the classified type
-                    scores = {project_type: confidence}
-                    
-                    # Add minimal scores for other types if provided
-                    if project_types:
-                        for pt in project_types:
-                            if pt != project_type:
-                                scores[pt] = 0.01
-                    
-                    return scores
-                else:
-                    raise ValueError("Invalid response format: missing project_type or confidence")
+                project_type = result["project_type"]
+                confidence = float(result["confidence"]) / 100.0  # Normalize to 0-1
+                
+                # Ensure confidence is in valid range
+                confidence = max(0.0, min(1.0, confidence))
+                
+                # Create scores dictionary with the classified type
+                scores = {project_type: confidence}
+                
+                # Add minimal scores for other types
+                for pt in project_types:
+                    if pt != project_type:
+                        scores[pt] = 0.01
+                
+                return scores
             except json.JSONDecodeError:
                 raise ValueError(f"Failed to parse JSON response: {content}")
         else:

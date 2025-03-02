@@ -15,14 +15,16 @@ from .core import (
 )
 
 # README processing functionality
-from .readme import (
-    get_repo_readme
+from .description import (
+    classify_description_heuristic,
+    classify_description_ai
 )
 
 # Utility functions
 from .utils import (
     normalize_scores,
-    get_top_n_scores
+    get_top_n_scores, 
+    get_repo_readme
 )
 
 # Registry functionality
@@ -62,6 +64,8 @@ __all__ = [
     
     # README processing
     'get_repo_readme',
+    'classify_description_heuristic',
+    'classify_description_ai',
     
     # Utilities
     'normalize_scores',

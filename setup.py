@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="repo_classifier",
-    version="0.1.1",
+    version="0.1.3",
     author="YichaoXU",
     author_email="yxu166@jhu.edu",
     description="A library for classifying GitHub repositories",

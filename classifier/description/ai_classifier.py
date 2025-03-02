@@ -7,18 +7,18 @@ This module provides AI-powered classification for repositories.
 import re
 import json
 import requests
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
+from ..registry import get_classifier, get_available_classifiers
 
 # Export functions
-__all__ = ['classify_readme_ai']
+__all__ = ['classify_description_ai']
 
-def classify_readme_ai(
+def classify_description_ai(
     readme_text: str,
-    repo_url: str,
-    api_key: str,
+    classifier: Union[str, List[str]],
     api_url: str,
     model_name: str,
-    classifier: List[str],
+    api_key: str,
     temperature: float = 0.1,
     max_in_tokens: Optional[int] = 100,
     max_out_tokens: Optional[int] = None,
@@ -33,10 +33,6 @@ def classify_readme_ai(
     Args:
         readme_text: The README content of the repository to classify.
                     This should be the raw text content of the README file.
-        
-        repo_url: The URL of the GitHub repository.
-                 Used for context in the prompt to the AI service.
-                 Example: "https://github.com/username/repo-name"
         
         api_key: API key for the AI service.
                 This is required for authentication with the AI service.
@@ -80,9 +76,6 @@ def classify_readme_ai(
     if not readme_text:
         raise ValueError("README text cannot be empty")
     
-    if not repo_url:
-        raise ValueError("Repository URL cannot be empty")
-    
     if not api_key:
         raise ValueError("API key cannot be empty")
     
@@ -92,8 +85,16 @@ def classify_readme_ai(
     if not model_name:
         raise ValueError("Model name cannot be empty")
     
-    if not classifier or not isinstance(classifier, list) or len(classifier) == 0:
-        raise ValueError("Project types must be a non-empty list")
+    # Parse classifier parameter
+    if isinstance(classifier, str):
+        # Get classifier from registry by name
+        classifier = get_classifier(classifier)
+        if not classifier:
+            available = get_available_classifiers()
+            raise ValueError(f"Classifier not found: {classifier}. Available classifiers: {', '.join(available)}")
+    else:
+        # Use dictionary directly as configuration
+        classifier = classifier
     
     # Validate model name
     supported_models = {
@@ -112,16 +113,14 @@ def classify_readme_ai(
         raise ValueError(f"Unsupported model: {model_name}. Supported models: {', '.join(supported_model_list)}")
     
     # Truncate README if too long (to avoid token limits)
-    if max_in_tokens and len(readme_text) > max_in_tokens:
-        readme_text = readme_text[:max_in_tokens] + "..."
+    if max_in_tokens and len(readme_text) > max_in_tokens * 4:
+        readme_text = readme_text[:max_in_tokens*4] + "...."
     
     # Build prompt
     prompt = f"""
     Analyze the following GitHub repository README and classify it as one of the following project types:
     {', '.join(classifier)}
-    
-    Repository: {repo_url}
-    
+        
     README:
     {readme_text}
     

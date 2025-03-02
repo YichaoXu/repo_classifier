@@ -8,8 +8,8 @@ from typing import Dict, List, Optional, Union, Tuple
 
 # Import from other modules
 from .registry import get_classifier, get_available_classifiers
-from .utils import get_top_n_scores
-from .readme import get_repo_readme, classify_readme_heuristic, classify_readme_ai
+from .utils import get_top_n_scores, get_repo_readme
+from .description import classify_description_heuristic, classify_description_ai
 from .predefine import DFT_PROJECT_TYPE_NAMES
 from .evaluation import get_ground_truth_repos
 
@@ -109,7 +109,7 @@ def classify_repository_heuristic(
     readme_text = get_repo_readme(repo_url)
     
     # Perform heuristic classification
-    all_scores = classify_readme_heuristic(readme_text, config)
+    all_scores = classify_description_heuristic(readme_text, config)
     
     # Get top N scores
     results = get_top_n_scores(all_scores, top_n)
@@ -118,10 +118,10 @@ def classify_repository_heuristic(
 
 def classify_repository_ai(
     repo_url: str,
-    api_key: str,
-    model_name: str,
     classifier: Union[str, List[str]],
     api_url: str,
+    model_name: str,
+    api_key: str,
     top_n: int = 3,
     temperature: float = 0.1,
     max_in_tokens: Optional[int] = 100,
@@ -261,8 +261,9 @@ def classify_repository_ai(
     readme_text = get_repo_readme(repo_url)
     
     # Perform AI classification
-    all_scores = classify_readme_ai(
-        readme_text=readme_text, 
+    all_scores = classify_description_ai(
+        readme_text=readme_text,
+        classifier=project_types,
         repo_url=repo_url, 
         api_key=api_key, 
         api_url=api_url, 

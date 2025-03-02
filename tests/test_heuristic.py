@@ -14,7 +14,7 @@ from classifier import (
     register_classifier,
     get_classifier,
     get_available_classifiers,
-    classify_readme_heuristic,
+    classify_description_heuristic,
     normalize_scores,
     get_top_n_scores
 )
@@ -82,7 +82,7 @@ class TestHeuristicClassifier(unittest.TestCase):
             }
         }
         
-        results = classify_readme_heuristic(readme, project_types)
+        results = classify_description_heuristic(readme, project_types)
         
         # Check that all types are present
         self.assertIn("Web App", results)

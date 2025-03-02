@@ -11,7 +11,7 @@ from unittest.mock import patch, MagicMock
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from classifier import (
-    classify_readme_ai,
+    classify_description_ai,
     classify_repository_ai
 )
 
@@ -42,7 +42,7 @@ class TestAIClassifier(unittest.TestCase):
         project_types = ["Web Framework", "Library", "CLI Tool"]
         
         # Call function
-        result = classify_readme_ai(
+        result = classify_description_ai(
             readme_text,
             repo_url,
             api_key,
@@ -86,7 +86,7 @@ class TestAIClassifier(unittest.TestCase):
         project_types = ["Web Framework", "Data Science", "CLI Tool"]
         
         # Call function
-        result = classify_readme_ai(
+        result = classify_description_ai(
             readme_text,
             repo_url,
             api_key,
@@ -119,7 +119,7 @@ class TestAIClassifier(unittest.TestCase):
         
         # Call function and check exception
         with self.assertRaises(ValueError) as context:
-            classify_readme_ai(
+            classify_description_ai(
                 readme_text,
                 repo_url,
                 api_key,

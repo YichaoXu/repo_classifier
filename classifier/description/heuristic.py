@@ -7,14 +7,14 @@ and predefined weights.
 """
 
 from typing import Dict, Union
-from ..utils import normalize_scores
-
+from ..utils import normalize_scores    
+from ..registry import get_classifier, get_available_classifiers
 # Export functions
-__all__ = ['classify_readme_heuristic']
+__all__ = ['classify_description_heuristic']
 
-def classify_readme_heuristic(
+def classify_description_heuristic(
     readme_text: str, 
-    classifier: Union[str, Dict[str, Dict[str, int]]]
+    classifier: Union[str, Dict[str, Dict[str, int]]], 
 ) -> Dict[str, float]:
     """
     Classify repository README content based on keywords and weights using a heuristic approach.
@@ -41,6 +41,8 @@ def classify_readme_heuristic(
                           "Web Framework": {"laravel": 10, "routing": 5, "mvc": 5},
                           "CMS": {"content": 8, "management": 5, "admin": 5}
                       }
+        top_n: The number of top project types to return.
+               Default is 3.
     
     Returns:
         A dictionary mapping project types to normalized confidence scores (0.0 to 1.0).
@@ -65,6 +67,17 @@ def classify_readme_heuristic(
         ... )
         {'Web Framework': 0.8, 'CMS': 0.2}
     """
+        
+    # Parse classifier parameter
+    if isinstance(classifier, str):
+        # Get classifier from registry by name
+        classifier = get_classifier(classifier)
+        if not classifier:
+            available = get_available_classifiers()
+            raise ValueError(f"Classifier not found: {classifier}. Available classifiers: {', '.join(available)}")
+    else:
+        # Use dictionary directly as configuration
+        classifier = classifier
     # Preprocess README text (convert to lowercase for case-insensitive matching)
     processed_text = readme_text.lower()
     
